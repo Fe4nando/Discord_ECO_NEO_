@@ -19,28 +19,31 @@ class Level(commands.Cog):
         
     @commands.Cog.listener()
     async def on_message(self,ctx):
-        xp=random.randint(350,700)
-        max=10000
-        await open_account(ctx.author)
-        users=await get_level_data()
-        user=ctx.author
-        try:  
-         check=users[str(user.id)]['charged']
-        except:
-         users[str(user.id)]['charged']=0
-         check=users[str(user.id)]['charged']
-         with open(r'./data/level.json','w') as f:
-          json.dump(users,f)
-        if check==1:
+        if ctx.author.bot:
+           return
+        else:
+         xp=random.randint(350,700)
+         max=10000
+         await open_account(ctx.author)
+         users=await get_level_data()
+         user=ctx.author
+         try:  
+          check=users[str(user.id)]['charged']
+         except:
+          users[str(user.id)]['charged']=0
+          check=users[str(user.id)]['charged']
+          with open(r'./data/level.json','w') as f:
+           json.dump(users,f)
+         if check==1:
             xp=xp*3
             xp=round(xp)
-        users[str(user.id)]['xp']+=xp
-        with open(r'./data/level.json','w') as f:
-         json.dump(users,f)
-        await open_account(ctx.author)
-        users=await get_level_data()
-        xp=users[str(user.id)]['xp']
-        if xp >= max:
+         users[str(user.id)]['xp']+=xp
+         with open(r'./data/level.json','w') as f:
+            json.dump(users,f)
+         await open_account(ctx.author)
+         users=await get_level_data()
+         xp=users[str(user.id)]['xp']
+         if xp >= max:
             currentxp=xp-max
             users[str(user.id)]['level']+=1
             users[str(user.id)]['xp']=currentxp
@@ -176,3 +179,61 @@ class Level(commands.Cog):
         
 async def setup(client):
     await client.add_cog(Level(client))
+
+async def open_account(user):
+    users=await get_bank_data()
+    if str(user.id) in users:
+        return False
+    else:
+        users[str(user.id)]={}
+        users[str(user.id)]["Wallet"]=0
+        users[str(user.id)]["Bank"]=0
+        users[str(user.id)]["Net"]=0
+        users[str(user.id)]["daily count"]=0
+        users[str(user.id)]["Job"]=0
+        users[str(user.id)]["Hours"]=0
+        users[str(user.id)]["Tree"]=0
+        
+       
+
+    with open(r"./data/mainbank.json","w") as f:
+        json.dump(users,f)
+       
+        
+    return True
+        
+
+async def get_bank_data():
+    with open (r"./data/mainbank.json","r") as f:
+        users=json.load(f)
+
+        return users 
+        
+        
+async def open_account(user):
+    users= await get_level_data()
+        
+    if str(user.id)in users:
+        return False
+    else:
+        users[str(user.id)]={}
+        users[str(user.id)]['level']=1
+        users[str(user.id)]['xp']=0
+        users[str(user.id)]['charged']=0
+        
+    with open(r'./data/level.json','w') as f:
+        json.dump(users,f)
+
+    
+async def get_level_data():
+    with open(r'./data/level.json','r') as f:
+        users=json.load(f)
+    return users
+
+async def update_bank(user,change=0,mode="Wallet"):
+    users=await get_bank_data()
+    users[str(user.id)][mode]+=change
+    with open(r"./data/mainbank.json","w") as f:
+        json.dump(users,f)
+    bal=[users[str(user.id)]["Wallet"],users[str(user.id)]["Bank"]]
+    return bal

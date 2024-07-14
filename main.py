@@ -1,18 +1,20 @@
+
 import os
-from webserver import keep_alive
-import discord 
-import json
+import discord
+import asyncio 
+import random
+
 from discord.ext import commands 
+from discord.ui import Button,View
 from discord import app_commands
 from Assets.embeds import *
-from Assets.access import *
+from Assets.gifs import *
 
 
 
-#keep_alive()
 class Client(commands.Bot):
     def __init__(self):
-        super().__init__(command_prefix='$', 
+        super().__init__(command_prefix='meow', 
                          intents=discord.Intents.all())
         self.synced=False
         
@@ -27,27 +29,24 @@ class Client(commands.Bot):
             await client.tree.sync()
             self.synced=True
         print('Bot is Connected to Discord')
-        await self.change_presence(status=discord.Status.online,activity=discord.Game("$help"))
+        count=1
+        count=1
+        while (count < 3):
+          await self.change_presence(status=discord.Status.idle,activity=discord.Game("/stop_smiling"))
+          await asyncio.sleep(15)
+          await self.change_presence(status=discord.Status.idle,activity=discord.Game("/cutie_patootie"))
+          await asyncio.sleep(15)
+         
+  
         
 client=Client()
-client.remove_command('help')
 cilent=client
 
-@cilent.command()
-async def help(ctx):
-  await ctx.send(embed=help1)
 
-@client.command()
-async def patch(ctx):
-   await ctx.send(embed=xzy)
-  
-
-
-client.run("")
+client.run("MTI1NTQ5MDIxMjIzOTI0OTQ0OQ.GoL6JQ.1RZMJhTUV-h1XdzUwJzdghJCVkpaS4ak-xBjxE")
     
 
 
-#keep_alive()
-    
+
 
 
